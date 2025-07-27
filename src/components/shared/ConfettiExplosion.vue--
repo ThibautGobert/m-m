@@ -1,0 +1,141 @@
+<template>
+    <div class="confetti-container" ref="container">
+        <slot></slot>
+        <div
+            v-for="(confetti, index) in confettis"
+            :key="index"
+            class="confetti"
+            :style="confetti.style"
+        >{{ confetti.char }}</div>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'ConfettiExplosion',
+    props: {
+        puissance: {
+            type: Number,
+            required: true,
+            validator: value => value > 0
+        },
+        timeout: {
+            type: Number,
+            default: 0
+        }
+    },
+    data() {
+        return {
+            confettis: []
+        }
+    },
+    mounted() {
+        setTimeout(() => {
+            this.createExplosion();
+        }, this.timeout);
+    },
+    methods: {
+        createExplosion() {
+            const count = Math.min(this.puissance * 40, 500);
+            const containerRect = this.$refs.container.getBoundingClientRect();
+
+            for (let i = 0; i < count; i++) {
+                this.confettis.push(this.generateConfetti(containerRect));
+            }
+
+            // Nettoyer après l'animation
+            setTimeout(() => {
+                this.confettis = [];
+            }, 5000);
+        },
+        generateConfetti(containerRect) {
+            // Types de confettis en fonction de la puissance
+            const types = [
+                { class: 'square', char: '' },
+                { class: 'circle', char: '' }
+            ];
+
+            if (this.puissance > 2) types.push({ class: 'star', char: '★' });
+            if (this.puissance > 4) types.push({ class: 'heart', char: '❤' });
+
+            const type = types[Math.floor(Math.random() * types.length)];
+            const size = Math.random() * 10 + 5;
+            const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+
+            return {
+                char: type.char,
+                style: {
+                    '--x-start': `${containerRect.left + containerRect.width / 2}px`,
+                    '--y-start': `${containerRect.top + containerRect.height / 2}px`,
+                    '--x-end': `${(Math.random() - 0.5) * 500 * this.puissance / 2}px`,
+                    '--y-end': `${(Math.random() + 0.5) * 500 * this.puissance / 2}px`,
+                    '--rotation': `${Math.random() * 720 - 360}deg`,
+                    '--size': `${size}px`,
+                    '--duration': `${Math.random() * 2000 + 2000}ms`,
+                    '--delay': `${Math.random() * 500}ms`,
+                    'color': type.char ? color : 'transparent',
+                    'background-color': type.char ? 'transparent' : color
+                },
+                class: type.class
+            }
+        }
+    }
+}
+</script>
+
+<style scoped>
+.confetti-container {
+    position: relative;
+    display: inline-block;
+}
+
+.confetti {
+    position: fixed;
+    top: 0;
+    left: 0;
+    font-size: var(--size);
+    line-height: 1;
+    width: var(--size);
+    height: var(--size);
+    z-index: 10000;
+    opacity: 0;
+    transform:
+        translate3d(var(--x-start), var(--y-start), 0)
+        rotate(0deg);
+    animation: confetti-fall var(--duration) ease-out var(--delay) forwards;
+}
+
+.confetti.square {
+    border-radius: 0;
+}
+
+.confetti.circle {
+    border-radius: 50%;
+}
+
+.confetti.star,
+.confetti.heart {
+    background: transparent !important;
+    width: calc(var(--size) * 1.5);
+    height: calc(var(--size) * 1.5);
+    text-align: center;
+}
+
+@keyframes confetti-fall {
+    0% {
+        opacity: 1;
+        transform:
+            translate3d(var(--x-start), var(--y-start), 0)
+            rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform:
+            translate3d(
+                calc(var(--x-start) + var(--x-end)),
+                calc(var(--y-start) + var(--y-end)),
+                0)
+            rotate(var(--rotation));
+    }
+}
+</style>

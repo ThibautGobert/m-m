@@ -1,0 +1,121 @@
+@use "variables" as *;
+$dot-color: #8000D9FF;
+@use 'three-dots' with (
+    $dot-bg-color: $dot-color,
+    $dot-before-color: $dot-color,
+    $dot-after-color: $dot-color
+);
+
+@import "@syncfusion/ej2-base/styles/tailwind.css";
+@import "@syncfusion/ej2-buttons/styles/tailwind.css";
+@import "@syncfusion/ej2-splitbuttons/styles/tailwind.css";
+@import "@syncfusion/ej2-lists/styles/tailwind.css";
+@import "@syncfusion/ej2-popups/styles/tailwind.css";
+@import "@syncfusion/ej2-inputs/styles/tailwind.css";
+@import "@syncfusion/ej2-navigations/styles/tailwind.css";
+@import "@syncfusion/ej2-dropdowns/styles/tailwind.css";
+@import "@syncfusion/ej2-image-editor/styles/tailwind.css";
+
+@import "../fontawesome/fontawesome.css";
+
+html {
+    scrollbar-gutter: auto !important;
+}
+
+html:has(body.content-overflow-y) {
+    scrollbar-gutter: stable !important;
+}
+html, body, #app {
+    height: 100vh;
+    max-height: 100vh;
+    overflow-y: hidden;
+    transition: background 0.3s ease-in-out;
+}
+div {
+    transition: background 0.3s ease-in-out;
+}
+.form-control {
+    margin-bottom: 1rem;
+    label {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    input {
+        outline-offset: 0;
+        outline: 1px;
+        width: 100%;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+}
+
+
+#auth-card {
+    position: relative;
+    top: -#{$navbarHeight};
+}
+
+.sk-load {
+    position: relative;
+    overflow: hidden;
+    &.active {
+        background-color: #e0e0e0;
+        width: 100%;
+        &:has(.input) {
+            border-radius: .25rem;
+        }
+        &:before {
+            z-index: 50;
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #e0e0e0;
+        }
+        &:after {
+            z-index: 50;
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -150%;
+            width: 150%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            animation: shimmer 2s infinite;
+        }
+    }
+}
+.sk-load.active {
+    &:before,
+    &:after {
+        opacity: 1;
+        //transition: opacity .4s ease;
+    }
+}
+
+.sk-load.active.fading {
+    &:before,
+    &:after {
+        opacity: 0;
+    }
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(150%);
+    }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s ease;
+    transform: translateY(0);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+}
